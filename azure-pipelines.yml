@@ -1,0 +1,83 @@
+# Node.js Express Web App to Linux on Azure
+# Build a Node.js Express app and deploy it to Azure as a Linux web app.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+
+variables:
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+      
+    steps:
+    - task: AzureCLI@1
+      displayName: 'Azure CLI '
+      inputs:
+        azureSubscription: $(subscription)
+        scriptLocation: inlineScript
+        inlineScript: 'az group create --location northeurope --name $(demorg)'
+
+
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create Or Update Resource Group action on $(demorg)'
+      inputs:
+        azureSubscription: $(subscription)
+        resourceGroupName: '$(demorg)'
+        location: 'North Europe'
+        csmFile: iac/webapp.json
+        csmParametersFile: iac/webapp.parameters.json
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+        npm run build --if-present
+        # npm run test --if-present
+      displayName: 'npm install, build and test'
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - task: PublishPipelineArtifact@0
+      inputs:
+        #artifactName: 'drop' 
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'development'
+    pool: 
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Azure Web App Deploy: hopperwebapp'
+            inputs:
+              azureSubscription: $(subscription)
+              appType: webAppLinux
+              WebAppName: $(webappname)
+              packageForLinux: '$(Build.ArtifactStagingDirectory)'
+              WebConfigParameters: '-Handler iisnode -NodeStartFile index.js -appType node'

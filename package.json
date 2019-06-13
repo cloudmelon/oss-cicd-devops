@@ -1,0 +1,15 @@
+{
+  "name": "osssampleapp",
+  "version": "1.0.0",
+  "description": "Sample code to deploy node.js application using unified Yaml-defined CI/CD Pipelines of Azure DevOps",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.14.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "cloudmelon",
+  "license": "MIT"
+}
