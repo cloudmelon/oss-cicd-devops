@@ -10,6 +10,9 @@ variables:
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+  demorg: 'melon-cicd-rg'
+  subscription : 'testscon'
+  webappname : 'meloncicdwebapp'
 
 stages:
 - stage: Build
@@ -24,7 +27,7 @@ stages:
     - task: AzureCLI@1
       displayName: 'Azure CLI '
       inputs:
-        azureSubscription: $(subscription)
+        azureSubscription: '$(subscription)'
         scriptLocation: inlineScript
         inlineScript: 'az group create --location northeurope --name $(demorg)'
 
@@ -32,11 +35,12 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Azure Deployment:Create Or Update Resource Group action on $(demorg)'
       inputs:
-        azureSubscription: $(subscription)
+        azureSubscription: '$(subscription)'
         resourceGroupName: '$(demorg)'
         location: 'North Europe'
         csmFile: iac/webapp.json
         csmParametersFile: iac/webapp.parameters.json
+        overrideParameters: # –webAppName $(webappname)
 
     - task: NodeTool@0
       inputs:
@@ -48,16 +52,26 @@ stages:
         npm run build --if-present
         # npm run test --if-present
       displayName: 'npm install, build and test'
+
     - task: CopyFiles@2
-      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)/$(webappname)'
       inputs:
         SourceFolder: '$(system.defaultworkingdirectory)'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(webappname)'
+
+    - task: ArchiveFiles@2
+      displayName: '$(webappname) Archive'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(webappname)'
+        includeRootFolder: false
+        archiveType: zip
+        replaceExistingArchive: true
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
 
     - task: PublishPipelineArtifact@0
+      displayName: 'PublishPipelineArtifact: drop'
       inputs:
-        #artifactName: 'drop' 
-        targetPath: '$(Build.ArtifactStagingDirectory)'
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
 
 - stage: Deploy
   displayName: Deploy stage
@@ -73,11 +87,15 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: AzureRmWebAppDeployment@4
-            displayName: 'Azure Web App Deploy: hopperwebapp'
+          - task: DownloadPipelineArtifact@1
+            displayName: 'Download Pipeline Artifact'
             inputs:
-              azureSubscription: $(subscription)
-              appType: webAppLinux
-              WebAppName: $(webappname)
-              packageForLinux: '$(Build.ArtifactStagingDirectory)'
-              WebConfigParameters: '-Handler iisnode -NodeStartFile index.js -appType node'
+              buildType: 'current'
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: '$(subscription)'
+              appType: 'webApp'
+              appName: '$(webappname)'
+              package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
+              customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
+              deploymentMethod: 'zipDeploy'
