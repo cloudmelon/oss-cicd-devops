@@ -11,7 +11,7 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
   demorg: 'melon-cicd-rg'
-  subscription : 'melonscon'
+  subscription : 'testscon'
   webappname : 'meloncicdwebapp'
 
 stages:
@@ -27,20 +27,22 @@ stages:
     - task: AzureCLI@1
       displayName: 'Azure CLI '
       inputs:
-        azureSubscription: '$(subscription)'
+        azureSubscription: $(subscription)
         scriptLocation: inlineScript
         inlineScript: 'az group create --location northeurope --name $(demorg)'
 
-
+    
     - task: AzureResourceGroupDeployment@2
       displayName: 'Azure Deployment:Create Or Update Resource Group action on $(demorg)'
       inputs:
-        azureSubscription: '$(subscription)'
+        azureSubscription: $(subscription)
         resourceGroupName: '$(demorg)'
         location: 'North Europe'
-        csmFile: iac/webapp.json
-        csmParametersFile: iac/webapp.parameters.json
-        overrideParameters: # –webAppName $(webappname)
+        templateLocation: 'Linked artifact'
+        csmFile: 'iac/webapp.json'
+        csmParametersFile: 'iac/webapp.parameters.json'
+        overrideParameters: '–webAppName $(webappname)'
+        deploymentMode: 'Incremental'
 
     - task: NodeTool@0
       inputs:
@@ -99,3 +101,4 @@ stages:
               package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
+
