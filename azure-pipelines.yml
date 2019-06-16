@@ -41,7 +41,6 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: 'iac/webapp.json'
         csmParametersFile: 'iac/webapp.parameters.json'
-        overrideParameters: '–webAppName $(webappname)'
         deploymentMode: 'Incremental'
 
     - task: NodeTool@0
