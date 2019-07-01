@@ -12,7 +12,7 @@ Azure DevOps
 
 This consists of the following components:
 
-<img src="screenshots/Azure DevOps.PNG" alt="Azure DevOps" width="600px"/>
+<img src="screenshots/Azure DevOps.PNG" alt="Azure DevOps" width="800px"/>
 
 Git repositories for source control of your code
 Build and release management to support continuous integration and delivery of your apps
