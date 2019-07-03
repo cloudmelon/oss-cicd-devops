@@ -1,6 +1,10 @@
 # Using unified Yaml-defined CI/CD Pipelines of Azure DevOps
 Sample code to deploy node.js application using unified Yaml-defined CI/CD Pipelines of Azure DevOps
 
+Solution Diagram : 
+<img src="screenshots/Diagram.PNG" alt="solution diagram" width="800px"/>
+
+
 Using unified CI/CD yaml definition pipeline:
 
 <img src="screenshots/definition.PNG" alt="yaml definition" width="800px"/>
@@ -31,10 +35,101 @@ Azure pipeline as a core part of Azure DevOps, it allows for the creation of CI 
 
 Create an Azure account by browsing to https://azure.microsoft.com/en-us/free/ or claim your MSDN benefits to get a visual studio subscription.  Go to portal.azure.com and then Click on Cost Management and Billing on the left-hand panel. You should see your subscription name in the middle panel – it will be a long string of letters and numbers with hyphens between. Note this name somewhere. 
 
+## Trigger and variable definition
+
+```
+# Node.js Express Web App to Linux on Azure
+# Build a Node.js Express app and deploy it to Azure as a Linux web app.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+
+trigger:
+
+- master
+
+variables:
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+  demorg: 'melon-cicd-rg'
+  subscription : 'testscon'
+  webappname : 'meloncicdwebapp'
+
+
+```
+
+
 ## Define your CI pipeline
 
+In your CI pipeline, you need to definne as the following : 
 
+```
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: AzureCLI@1
+      displayName: 'Azure CLI '
+      inputs:
+        azureSubscription: $(subscription)
+        scriptLocation: inlineScript
+        inlineScript: 'az group create --location northeurope --name $(demorg)'
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create Or Update Resource Group action on $(demorg)'
+      inputs:
+        azureSubscription: $(subscription)
+        resourceGroupName: '$(demorg)'
+        location: 'North Europe'
+        templateLocation: 'Linked artifact'
+        csmFile: 'iac/webapp.json'
+        csmParametersFile: 'iac/webapp.parameters.json'
+        deploymentMode: 'Incremental'
+
+
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+        npm run build --if-present
+        # npm run test --if-present
+      displayName: 'npm install, build and test'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)/$(webappname)'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(webappname)'
+
+
+    - task: ArchiveFiles@2
+      displayName: '$(webappname) Archive'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(webappname)'
+        includeRootFolder: false
+        archiveType: zip
+        replaceExistingArchive: true
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
+
+
+    - task: PublishPipelineArtifact@0
+      displayName: 'PublishPipelineArtifact: drop'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
+
+
+```
 
 
 ## Define your CD pipeline
+
+Please make sure you define different stages :
 
