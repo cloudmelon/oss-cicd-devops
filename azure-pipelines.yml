@@ -12,7 +12,8 @@ variables:
   vmImageName: 'ubuntu-latest'
   demorg: 'melon-cicd-rg'
   subscription : 'testscon'
-  webappname : 'meloncicdwebapp'
+  webappname : 'melonsamplewebapp'
+  prodwebappname : 'melonsamplewebapp-prod'
 
 stages:
 - stage: Build
@@ -123,7 +124,7 @@ stages:
             inputs:
               azureSubscription: '$(subscription)'
               appType: 'webApp'
-              appName: '$(webappname)'
-              package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
+              appName: '$(prodwebappname)'
+              package: '$(System.ArtifactsDirectory)/drop/$(prodwebappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
