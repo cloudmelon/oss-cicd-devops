@@ -1,4 +1,4 @@
-# Using unified Yaml-defined CI/CD Pipelines of Azure DevOps
+# Using Unified Yaml-defined CI/CD Pipelines of Azure DevOps
 Sample code to deploy node.js application using unified Yaml-defined CI/CD Pipelines of Azure DevOps
 
 Solution Diagram : 
@@ -133,3 +133,59 @@ In your CI pipeline, you need to definne as the following :
 
 Please make sure you define different stages :
 
+- stage: Dev
+  displayName: Dev stage
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: Dev
+    displayName: Dev
+    environment: 'development'
+    pool: 
+      vmImage: $(vmImageName)
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@1
+            displayName: 'Download Pipeline Artifact'
+            inputs:
+              buildType: 'current'
+
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: '$(subscription)'
+              appType: 'webApp'
+              appName: '$(webappname)'
+              package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
+              customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
+              deploymentMethod: 'zipDeploy'
+
+- stage: Prod
+  displayName: Prod stage
+  dependsOn: Dev
+  condition: succeeded()
+  jobs:
+  - deployment: Prod
+    displayName: Prod
+    environment: 'production'
+    pool: 
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@1
+            displayName: 'Download Pipeline Artifact'
+            inputs:
+              buildType: 'current'
+
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: '$(subscription)'
+              appType: 'webApp'
+              appName: '$(webappname)'
+              package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
+              customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
+              deploymentMethod: 'zipDeploy'
