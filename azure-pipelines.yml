@@ -102,6 +102,10 @@ stages:
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
 
+          - task: PublishPipelineArtifact@0
+            displayName: 'PublishPipelineArtifact: drop'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/$(prodwebappname).zip'
 
 - stage: Prod
   displayName: Prod stage
@@ -126,6 +130,6 @@ stages:
               azureSubscription: '$(subscription)'
               appType: 'webApp'
               appName: '$(prodwebappname)'
-              package: $(System.ArtifactsDirectory)/$(webappname).zip'
+              package: $(System.ArtifactsDirectory)/drop/$(prodwebappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
