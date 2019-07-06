@@ -73,55 +73,13 @@
             ]
         },
         {
-            "type": "Microsoft.Web/sites",
-            "name": "[concat(parameters('webAppName'),'-prod')]",
-            "apiVersion": "2016-08-01",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "[concat('hidden-related:', '/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty"
-            },
-            "resources": [
-                {
-                    "type": "siteextensions",
-                    "name": "Microsoft.ApplicationInsights.AzureWebSites",
-                    "apiVersion": "2015-08-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites', concat(parameters('webAppName'),'-prod'))]"
-                    ],
-                    "properties": {
-                    }
-                }
-            ],
-            "properties": {
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(resourceId('microsoft.insights/components/', parameters('webAppName')), '2015-05-01').InstrumentationKey]"
-                        },
-                        {
-                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "6.9.1"
-                        }
-                    ],
-                    "phpVersion": "7.1"
-                },
-                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "hostingEnvironment": "prod"
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "[resourceId('microsoft.insights/components/', parameters('webAppName'))]"
-            ]
-        },
-        {
             "type": "Microsoft.Web/serverfarms",
             "sku": {
                 "Tier": "[first(skip(split(parameters('sku'), ' '), 1))]",
                 "Name": "[first(split(parameters('sku'), ' '))]"
             },
             "name": "[parameters('hostingPlanName')]",
-            "apiVersion": "2015-08-01",
+            "apiVersion": "2017-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "name": "[parameters('hostingPlanName')]",
@@ -132,6 +90,31 @@
             }
         },
         {
+            "apiVersion": "2017-08-01",
+            "type": "Microsoft.Web/serverfarms",
+            "kind": "app",
+            "name": "[concat(parameters('hostingPlanName'),'-prod')]",
+            "location": "[resourceGroup().location]",
+            "properties": {},
+            "dependsOn": [],
+            "sku": {
+              "name": "[parameters('sku')]"
+            }
+          },
+          {
+            "apiVersion": "2016-08-01",
+            "type": "Microsoft.Web/sites",
+            "kind": "app",
+            "name": "[concat(parameters('webAppName'),'-prod')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+              "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('hostingPlanName'),'-prod'))]"
+            },
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/serverfarms', concat(parameters('hostingPlanName'),'-prod'))]"
+            ]
+          },
+         {
             "type": "Microsoft.Insights/components",
             "name": "[parameters('webAppName')]",
             "apiVersion": "2014-04-01",
