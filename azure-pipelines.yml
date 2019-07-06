@@ -101,6 +101,27 @@ stages:
               package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
+        
+          - task: CopyFiles@2
+            displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)/$(webappname)'
+            inputs:
+              SourceFolder: '$(system.defaultworkingdirectory)'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/$(webappname)'
+
+          - task: ArchiveFiles@2
+            displayName: '$(webappname) Archive'
+            inputs:
+              rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(webappname)'
+              includeRootFolder: false
+              archiveType: zip
+              replaceExistingArchive: true
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
+
+          - task: PublishPipelineArtifact@0
+            displayName: 'PublishPipelineArtifact: drop'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
+
 
 - stage: Prod
   displayName: Prod stage
