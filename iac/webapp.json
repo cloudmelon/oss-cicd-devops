@@ -86,7 +86,7 @@
                     "name": "Microsoft.ApplicationInsights.AzureWebSites",
                     "apiVersion": "2015-08-01",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]"
+                        "[resourceId('Microsoft.Web/Sites', concat(parameters('webAppName'),'-prod'))]"
                     ],
                     "properties": {
                     }
