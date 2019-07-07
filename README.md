@@ -2,7 +2,7 @@
 Sample code to deploy node.js application using unified Yaml-defined CI/CD Pipelines of Azure DevOps
 
 Solution Diagram : 
-<img src="screenshots/Diagram.PNG" alt="solution diagram" width="800px"/>
+<img src="screenshots/Architecture.PNG" alt="solution diagram" width="800px"/>
 
 
 Using unified CI/CD yaml definition pipeline:
