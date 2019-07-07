@@ -115,12 +115,12 @@ stages:
             displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)/$(webappname)'
             inputs:
               SourceFolder: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)/$(prodwebappname)'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
           - task: PublishPipelineArtifact@0
             displayName: 'PublishPipelineArtifact: drop'
             inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/$(prodwebappname)/$(webappname).zip'
+              targetPath: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
 
 - stage: Prod
   displayName: Prod stage
