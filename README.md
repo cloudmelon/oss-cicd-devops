@@ -131,19 +131,21 @@ In your CI pipeline, you need to definne as the following :
 
 ## Define your CD pipeline
 
-Please make sure you define different stages :
+Please make sure you define different stages, dependencies and deployment condition :
 
+Dev stage : 
+
+```
 - stage: Dev
   displayName: Dev stage
   dependsOn: Build
-  condition: succeeded()
+  condition: succeeded('Build')
   jobs:
   - deployment: Dev
     displayName: Dev
     environment: 'development'
     pool: 
       vmImage: $(vmImageName)
-
     strategy:
       runOnce:
         deploy:
@@ -161,11 +163,15 @@ Please make sure you define different stages :
               package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
+```
 
+Prod stage : 
+
+```
 - stage: Prod
   displayName: Prod stage
   dependsOn: Dev
-  condition: succeeded()
+  condition: succeeded('Dev')
   jobs:
   - deployment: Prod
     displayName: Prod
@@ -185,7 +191,9 @@ Please make sure you define different stages :
             inputs:
               azureSubscription: '$(subscription)'
               appType: 'webApp'
-              appName: '$(webappname)'
+              appName: '$(prodwebappname)'
               package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
+
+```
