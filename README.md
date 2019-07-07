@@ -1,4 +1,4 @@
-# Using Unified Yaml-defined CI/CD Pipelines of Azure DevOps
+# Using Unified Yaml-defined multi-stage CI/CD Pipelines of Azure DevOps ( Build, Dev and Prod )
 Sample code to deploy node.js application using unified Yaml-defined CI/CD Pipelines of Azure DevOps
 
 Solution Diagram : 
