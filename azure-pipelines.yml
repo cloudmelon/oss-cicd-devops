@@ -93,14 +93,6 @@ stages:
             displayName: 'Download Pipeline Artifact'
             inputs:
               buildType: 'current'
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: '$(subscription)'
-              appType: 'webApp'
-              appName: '$(webappname)'
-              package: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
-              customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
-              deploymentMethod: 'zipDeploy'
 
           - task: AzureWebApp@1
             inputs:
@@ -111,16 +103,6 @@ stages:
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
 
-          - task: CopyFiles@2
-            displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)/$(webappname)'
-            inputs:
-              SourceFolder: '$(System.ArtifactsDirectory)/drop/$(webappname).zip'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-          - task: PublishPipelineArtifact@0
-            displayName: 'PublishPipelineArtifact: drop'
-            inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/$(webappname).zip'
 
 - stage: Prod
   displayName: Prod stage
@@ -145,6 +127,6 @@ stages:
               azureSubscription: '$(subscription)'
               appType: 'webApp'
               appName: '$(prodwebappname)'
-              package: $(System.ArtifactsDirectory)/drop/$(prodwebappname)/$(webappname).zip'
+              package: $(System.ArtifactsDirectory)/drop/$(webappname).zip'
               customWebConfig: '-Handler iisnode -NodeStartFile index.js -appType node'
               deploymentMethod: 'zipDeploy'
