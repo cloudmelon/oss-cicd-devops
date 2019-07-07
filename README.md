@@ -7,7 +7,7 @@ Solution Diagram :
 
 Using unified CI/CD yaml definition pipeline:
 
-<img src="screenshots/definition.PNG" alt="yaml definition" width="800px"/>
+<img src="screenshots/Multi-stage pipeline.PNG" alt="yaml definition" width="800px"/>
 
 ## What is Azure DevOps ? 
 Azure DevOps (previously Visual Studio Team Services / VSTS) is Microsoft's answer to DevOps, and is essentially a cloud service for collaborating on code development, from writing the first lines of code through to building it, testing it and deploying it to production.
