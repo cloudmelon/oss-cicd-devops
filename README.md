@@ -53,8 +53,8 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
   demorg: 'melon-cicd-rg'
-  subscription : 'testscon'
-  webappname : 'meloncicdwebapp'
+  subscription : 'serviceconnectionname'
+  webappname : 'melonsamplewebapp'
 
 
 ```
