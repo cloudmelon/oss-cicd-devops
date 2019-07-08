@@ -197,3 +197,7 @@ Prod stage :
               deploymentMethod: 'zipDeploy'
 
 ```
+
+## Up & Running
+
+<img src="screenshots/Dev environment app.PNG" alt="solution diagram" width="800px"/>
