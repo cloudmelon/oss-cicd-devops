@@ -200,4 +200,6 @@ Prod stage :
 
 ## Up & Running
 
+The Dev environment application show as the following : 
+
 <img src="screenshots/Dev environment app.PNG" alt="solution diagram" width="800px"/>
