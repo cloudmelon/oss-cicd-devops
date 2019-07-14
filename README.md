@@ -62,7 +62,7 @@ variables:
 
 ## Define your CI pipeline
 
-In your CI pipeline, you need to definne as the following : 
+In your CI pipeline, you need to define as the following, if you're going to automate your test, you'll need to define the test in prior : 
 
 ```
 - stage: Build
