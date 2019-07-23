@@ -12,9 +12,7 @@ Using unified CI/CD yaml definition pipeline:
 ## What is Azure DevOps ? 
 Azure DevOps (previously Visual Studio Team Services / VSTS) is Microsoft's answer to DevOps, and is essentially a cloud service for collaborating on code development, from writing the first lines of code through to building it, testing it and deploying it to production.
 
-Azure DevOps
-
-This consists of the following components:
+Azure DevOps consists of the following components:
 
 <img src="screenshots/Azure DevOps.PNG" alt="Azure DevOps" width="800px"/>
 
