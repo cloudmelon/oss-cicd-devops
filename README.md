@@ -201,3 +201,10 @@ Prod stage :
 The Dev environment application show as the following : 
 
 <img src="screenshots/Dev environment app.PNG" alt="solution diagram" width="800px"/>
+
+
+## More details on my blog : 
+
+Please go to my blog cloud-melon.com to get more details about how to implement this solution and more about Microsoft Azure :
+
+https://cloud-melon.com/2019/07/08/end-to-end-ci-cd-automation-using-azure-devops-unified-yaml-defined-pipelines/
