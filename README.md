@@ -208,3 +208,6 @@ The Dev environment application show as the following :
 Please go to my blog cloud-melon.com to get more details about how to implement this solution and more about Microsoft Azure :
 
 https://cloud-melon.com/2019/07/08/end-to-end-ci-cd-automation-using-azure-devops-unified-yaml-defined-pipelines/
+
+
+Feel free to reach out to my twitter @MelonyQ for more details. 
