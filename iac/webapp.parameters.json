@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "webAppName": {
-        "value": "melonsamplewebapp"
+        "value": "melonbetawebapp"
       },
       "hostingPlanName": {
-        "value": "melonsamplewebappplan"
+        "value": "melonbetawebappplan"
       },
       "appInsightsLocation": {
         "value": "northeurope"
