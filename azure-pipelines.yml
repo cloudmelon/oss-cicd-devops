@@ -12,8 +12,8 @@ variables:
   vmImageName: 'ubuntu-latest'
   demorg: 'melon-cicd-rg'
   subscription : 'melonserviceconn'
-  webappname : 'melonsamplewebapp'
-  prodwebappname : 'melonsamplewebapp-prod'
+  webappname : 'melonbetawebapp'
+  prodwebappname : 'melonbetawebapp-prod'
 
 stages:
 - stage: Build
